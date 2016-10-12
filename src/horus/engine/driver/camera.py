@@ -156,6 +156,11 @@ class InputOutputError(Exception):
     def __init__(self):
         Exception.__init__(self, "V4L2 Input/Output Error")
 
+def settingsChanger(fn):
+    def mark_dirty(*args, **kw):
+        args[0]._settings_dirty = True
+        return fn(*args, **kw)
+    return mark_dirty
 
 class Camera(object):
 
@@ -281,10 +286,12 @@ class Camera(object):
             if self._updating:
                 return self._last_image
             else:
-                d = max(self._exposure / 64.0 * 2, 1/self._capture.fps)
                 self._reading = True
-                for n in range(flush):
-                    time.sleep(d)
+                if self._settings_dirty:
+                    time.sleep(0.130)
+                    self._settings_dirty = False
+                d = max(self._exposure / 64.0, 1/self._capture.fps)
+                time.sleep(max(d, d*flush))
                 image = self._capture.get()
                 self._reading = False
                 if True:
@@ -316,6 +323,7 @@ class Camera(object):
     def set_vflip(self, value):
         self._vflip = value
 
+    @settingsChanger
     def set_brightness(self, value):
         if self._is_connected:
             if self._brightness != value:
@@ -324,6 +332,7 @@ class Camera(object):
                 self._brightness = value
                 self._updating = False
 
+    @settingsChanger
     def set_contrast(self, value):
         if self._is_connected:
             if self._contrast != value:
@@ -332,6 +341,7 @@ class Camera(object):
                 ctl_param(self.camera_id, 'Contrast', value)
                 self._updating = False
 
+    @settingsChanger
     def set_saturation(self, value):
         if self._is_connected:
             if self._saturation != value:
@@ -340,6 +350,7 @@ class Camera(object):
                 ctl_param(self.camera_id, 'Saturation', value)
                 self._updating = False
 
+    @settingsChanger
     def set_exposure(self, value, force=False):
         if self._is_connected:
             if self._exposure != value or force:

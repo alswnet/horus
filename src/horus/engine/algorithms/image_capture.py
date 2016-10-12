@@ -5,6 +5,8 @@ __author__ = 'Jesús Arroyo Torrens <jesus.arroyo@bq.com>'
 __copyright__ = 'Copyright (C) 2014-2016 Mundo Reader S.L.'
 __license__ = 'GNU General Public License v2 http://www.gnu.org/licenses/gpl2.html'
 
+from time import sleep
+
 import cv2
 
 from horus import Singleton
@@ -100,9 +102,11 @@ class ImageCapture(object):
 
     def set_mode_texture(self):
         self.set_mode(self.texture_mode)
+        sleep(0.02)
 
     def set_mode_laser(self):
         self.set_mode(self.laser_mode)
+        sleep(0.02)
 
     def set_mode_pattern(self):
         self.set_mode(self.pattern_mode)
@@ -136,6 +140,7 @@ class ImageCapture(object):
             flush = self._flush_stream_laser
         else:
             flush = self._flush_laser
+        sleep(0.05)
         image = self.capture_image(flush=flush)
         self.driver.board.laser_off(index)
         return image
@@ -170,12 +175,14 @@ class ImageCapture(object):
         # Capture lasers
         images = [None, None]
         images[0] = self._capture_laser(0)
+        sleep(0.04)
         images[1] = self._capture_laser(1)
         if image_background is not None:
             if images[0] is not None:
                 images[0] = cv2.subtract(images[0], image_background)
             if images[1] is not None:
                 images[1] = cv2.subtract(images[1], image_background)
+#        print("--------------------------------")
         return images
 
     def capture_all_lasers(self):
@@ -206,6 +213,7 @@ class ImageCapture(object):
         return image
 
     def capture_image(self, flush=0):
+#        print("capture image x %d"%flush)
         image = self.driver.camera.capture_image(flush=flush)
         if self.use_distortion:
             if image is not None and \
