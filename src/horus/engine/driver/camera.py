@@ -61,7 +61,10 @@ class Camcorder(Thread):
 
         size_x, size_y = video.set_format(width, height, 0)
         self.size = (size_x, size_y)
-        self.fps = video.set_fps(30)
+        try:
+            self.fps = video.set_fps(30)
+        except Exception as e:
+            self.fps = 15
 
         print("Got %sx%s @ %s"%(size_x, size_y, self.fps))
 
@@ -80,6 +83,8 @@ class Camcorder(Thread):
                     import traceback
                     traceback.print_exc()
                 sleep(1)
+            else:
+                ctl_param(dev, 'Exposure, Auto', "1")
         else:
             raise RuntimeError("Can't init camera")
 
@@ -111,16 +116,11 @@ class Camcorder(Thread):
         self.video.close()
         cv2.destroyAllWindows()
 
-
 def temp_expoinit():
     pass
 
 def temp_getExposure():
-    return int(subprocess.check_output(['uvcdynctrl', '-g', 'Exposure (Absolute)']))
-
-def temp_setExposure(value):
-    print("SetExpo(%s)"%value)
-    print subprocess.check_output(['uvcdynctrl', '-s', 'Exposure (Absolute)', "%d"%int(value)])
+    ctl_param(self.dev, 'Exposure (Absolute)')
 
 if system == 'Darwin':
     import uvc
