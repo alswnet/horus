@@ -54,7 +54,11 @@ class Camcorder(Thread):
         Thread.__init__(self)
         self.setDaemon(True)
         self.dev = dev
-        video = v4l2capture.Video_device('/dev/video%d'%dev)
+        try:
+            video = v4l2capture.Video_device('/dev/video%d'%dev)
+        except Exception as e:
+            raise RuntimeError("Can't init camera")
+
         size_x, size_y = video.set_format(width, height, 0)
         self.size = (size_x, size_y)
         self.fps = video.set_fps(30)
