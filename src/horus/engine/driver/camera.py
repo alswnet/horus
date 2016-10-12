@@ -291,7 +291,6 @@ class Camera(object):
                     if self._vflip:
                         image = cv2.flip(image, 0)
                     self._success()
-                    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
                     self._last_image = image
                     return image
                 else:
