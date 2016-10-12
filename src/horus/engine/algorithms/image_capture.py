@@ -102,11 +102,11 @@ class ImageCapture(object):
 
     def set_mode_texture(self):
         self.set_mode(self.texture_mode)
-        sleep(0.02)
+        self.capture_image(flush=1)
 
     def set_mode_laser(self):
         self.set_mode(self.laser_mode)
-        sleep(0.02)
+        self.capture_image(flush=1)
 
     def set_mode_pattern(self):
         self.set_mode(self.pattern_mode)
@@ -196,6 +196,8 @@ class ImageCapture(object):
             self.driver.board.lasers_off()
             image_background = self.capture_image(flush=flush)
         self.driver.board.lasers_on()
+        if self._remove_background:
+            sleep(0.02)
         image = self.capture_image(flush=flush)
         self.driver.board.lasers_off()
         if image_background is not None:
