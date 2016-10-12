@@ -259,10 +259,6 @@ class ScanningWorkbench(Workbench):
             dlg.ShowModal()
             dlg.Destroy()
             self.scanning = False
-            # Flush video
-            image_capture.capture_texture()
-            image_capture.capture_texture()
-            image_capture.capture_texture()
             self.on_scan_finished()
         else:
             if isinstance(result, InputOutputError):
@@ -291,10 +287,6 @@ class ScanningWorkbench(Workbench):
         if result:
             self.scanning = False
             ciclop_scan.stop()
-            # Flush video
-            image_capture.capture_texture()
-            image_capture.capture_texture()
-            image_capture.capture_texture()
             self.on_scan_finished()
         else:
             if not paused:
