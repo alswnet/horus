@@ -140,7 +140,7 @@ class ImageCapture(object):
             flush = self._flush_stream_laser
         else:
             flush = self._flush_laser
-        sleep(0.05)
+        sleep(0.1)
         image = self.capture_image(flush=flush)
         self.driver.board.laser_off(index)
         return image
@@ -174,6 +174,7 @@ class ImageCapture(object):
             image_background = self.capture_image(flush=flush)
         # Capture lasers
         images = [None, None]
+        self.driver.board.laser_on(0)
         images[0] = self._capture_laser(0)
         sleep(0.04)
         images[1] = self._capture_laser(1)
