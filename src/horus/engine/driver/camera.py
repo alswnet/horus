@@ -84,6 +84,7 @@ class Camcorder(Thread):
                     traceback.print_exc()
                 sleep(1)
             else:
+                ctl_param(dev, 'Exposure, Auto Priority', "0")
                 ctl_param(dev, 'Exposure, Auto', "1")
         else:
             raise RuntimeError("Can't init camera")
